@@ -9,8 +9,8 @@ export interface Poll {
   question: string;
   options: Option[];
   totalVotes: number;
-  createdAt: string;
-  userVoted?: boolean;
+  userVoted: boolean;
+  created_at: string;
 }
 
 export interface CreatePollData {

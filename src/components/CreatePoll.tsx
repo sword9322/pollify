@@ -207,6 +207,10 @@ export default function CreatePoll() {
         </div>
       )}
 
+      <div className="text-center mb-8 text-sm text-gray-500">
+        <p>⚠️ Note: Polls without any votes will be automatically deleted after 7 days.</p>
+      </div>
+
       <div className="bg-white rounded-lg shadow-md p-6">
         <h2 className="text-2xl font-bold text-gray-800 mb-6">Access a Poll</h2>
         <form onSubmit={handleAccessPoll} className="flex gap-2">
