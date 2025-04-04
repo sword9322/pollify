@@ -210,7 +210,7 @@ export default function CreatePoll() {
             type="text"
             value={accessUrl}
             onChange={(e) => setAccessUrl(e.target.value)}
-            placeholder="Enter Poll URL"
+            placeholder="Enter Poll URL or ID"
             className="flex-1 h-12 px-4 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500"
           />
           <button
