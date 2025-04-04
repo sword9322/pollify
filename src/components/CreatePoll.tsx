@@ -93,7 +93,7 @@ export default function CreatePoll() {
   return (
     <div className="w-full max-w-lg mx-auto">
       {!pollUrl ? (
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div className="bg-white rounded-xl shadow-md p-8 mb-8">
           <h2 className="text-2xl font-bold text-gray-800 mb-6">Create a New Poll</h2>
           {error && (
             <div className="mb-4 p-4 bg-red-50 text-red-600 rounded-md">
@@ -109,39 +109,33 @@ export default function CreatePoll() {
                 type="text"
                 id="question"
                 value={question}
-                onChange={(e) => {
-                  setQuestion(e.target.value);
-                  setFormErrors({});
-                }}
-                maxLength={100}
+                onChange={(e) => setQuestion(e.target.value)}
+                className="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all outline-none"
                 placeholder="What's your question?"
-                className={`w-full h-12 px-4 border ${formErrors.question ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-teal-500 focus:border-teal-500`}
-                disabled={loading}
               />
               {formErrors.question && (
-                <p className="mt-1 text-sm text-red-500">{formErrors.question}</p>
+                <p className="mt-1 text-sm text-red-600">{formErrors.question}</p>
               )}
             </div>
 
-            <div className="space-y-4">
-              <label className="block text-sm font-medium text-gray-700">Options</label>
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Options
+              </label>
               {options.map((option, index) => (
-                <div key={index} className="flex gap-2">
+                <div key={index} className="flex mb-2 items-center">
                   <input
                     type="text"
                     value={option}
                     onChange={(e) => handleOptionChange(index, e.target.value)}
-                    maxLength={50}
+                    className="flex-grow p-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all outline-none"
                     placeholder={`Option ${index + 1}`}
-                    className={`flex-1 h-12 px-4 border ${formErrors.options ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-teal-500 focus:border-teal-500`}
-                    disabled={loading}
                   />
-                  {index >= 2 && (
+                  {options.length > 2 && (
                     <button
                       type="button"
                       onClick={() => removeOption(index)}
-                      className="text-red-500 hover:text-red-700 transition-colors"
-                      disabled={loading}
+                      className="ml-2 p-2 text-red-500 hover:text-red-700 rounded-lg"
                     >
                       <MinusCircle size={24} />
                     </button>
@@ -149,31 +143,29 @@ export default function CreatePoll() {
                 </div>
               ))}
               {formErrors.options && (
-                <p className="text-sm text-red-500">{formErrors.options}</p>
+                <p className="mt-1 text-sm text-red-600">{formErrors.options}</p>
+              )}
+              {options.length < 5 && (
+                <button
+                  type="button"
+                  onClick={addOption}
+                  className="mt-2 flex items-center text-teal-600 hover:text-teal-800"
+                >
+                  <PlusCircle size={20} className="mr-1" />
+                  Add Option
+                </button>
               )}
             </div>
-
-            {options.length < 5 && (
-              <button
-                type="button"
-                onClick={addOption}
-                className="mt-4 flex items-center text-teal-600 hover:text-teal-800 transition-colors"
-                disabled={loading}
-              >
-                <PlusCircle size={24} className="mr-2" />
-                Add Option
-              </button>
-            )}
 
             <button
               type="submit"
               disabled={loading}
-              className="mt-6 w-full h-12 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              className="w-full py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors flex items-center justify-center font-medium"
             >
               {loading ? (
                 <>
                   <Loader2 size={20} className="animate-spin mr-2" />
-                  Creating Poll...
+                  Creating...
                 </>
               ) : (
                 'Create Poll'
@@ -182,36 +174,36 @@ export default function CreatePoll() {
           </form>
         </div>
       ) : (
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div className="bg-white rounded-xl shadow-md p-8 mb-8">
           <h2 className="text-2xl font-bold text-gray-800 mb-6">Poll Created!</h2>
           <div className="flex items-center gap-2 mb-6">
             <input
               type="text"
               value={pollUrl}
               readOnly
-              className="flex-1 h-12 px-4 bg-gray-50 border border-gray-300 rounded-md"
+              className="flex-1 p-4 bg-gray-50 border border-gray-300 rounded-lg"
             />
             <button
               onClick={copyPollUrl}
-              className="h-12 px-4 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition-colors"
+              className="p-4 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
             >
               <Copy size={20} />
             </button>
           </div>
           <button
             onClick={resetForm}
-            className="w-full h-12 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors"
+            className="w-full py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium"
           >
             Create Another Poll
           </button>
         </div>
       )}
 
-      <div className="text-center mb-8 text-sm text-gray-500">
+      <div className="text-center mb-8 text-sm text-gray-600">
         <p>⚠️ Note: Polls without any votes will be automatically deleted after 7 days.</p>
       </div>
 
-      <div className="bg-white rounded-lg shadow-md p-6">
+      <div className="bg-white rounded-xl shadow-md p-8">
         <h2 className="text-2xl font-bold text-gray-800 mb-6">Access a Poll</h2>
         <form onSubmit={handleAccessPoll} className="flex gap-2">
           <input

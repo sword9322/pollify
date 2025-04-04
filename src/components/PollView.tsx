@@ -74,7 +74,7 @@ export default function PollView() {
 
   if (error || !poll) {
     return (
-      <div className="w-full max-w-lg mx-auto bg-white rounded-lg shadow-md p-6">
+      <div className="w-full max-w-lg mx-auto bg-white rounded-xl shadow-md p-8">
         <div className="text-red-600">
           {error || 'Poll not found'}
         </div>
@@ -84,10 +84,10 @@ export default function PollView() {
 
   return (
     <div className="w-full max-w-lg mx-auto">
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-8">
         <button
           onClick={() => navigate('/')}
-          className="flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
+          className="flex items-center gap-2 px-4 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-medium"
         >
           <PlusCircle size={20} />
           Create New Poll
@@ -95,21 +95,21 @@ export default function PollView() {
         <div className="flex gap-2">
           <button
             onClick={handleCopyLink}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+            className="flex items-center gap-2 p-3 bg-white text-gray-700 rounded-lg hover:bg-gray-100 transition-colors border border-gray-200 shadow-sm"
             title="Copy to clipboard"
           >
             <Copy size={20} />
           </button>
           <button
             onClick={handleShare}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+            className="flex items-center gap-2 p-3 bg-white text-gray-700 rounded-lg hover:bg-gray-100 transition-colors border border-gray-200 shadow-sm"
             title="Share"
           >
             <Share2 size={20} />
           </button>
           <button
             onClick={handleShareToX}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+            className="flex items-center gap-2 p-3 bg-white text-gray-700 rounded-lg hover:bg-gray-100 transition-colors border border-gray-200 shadow-sm"
             title="Share on X"
           >
             <Twitter size={20} />
@@ -117,17 +117,17 @@ export default function PollView() {
         </div>
       </div>
       
-      <div className="bg-white rounded-lg shadow-md p-6">
+      <div className="bg-white rounded-xl shadow-md p-8">
         <h1 className="text-2xl font-bold text-gray-800 mb-6">{poll.question}</h1>
         
         {poll.totalVotes === 0 && timeRemaining && (
-          <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg flex items-center gap-2">
-            <Clock size={16} className="text-amber-600" />
+          <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg flex items-center gap-2">
+            <Clock size={18} className="text-amber-600" />
             <span className="text-amber-800 text-sm">{timeRemaining}</span>
           </div>
         )}
         
-        <div className="space-y-4">
+        <div className="space-y-4 mb-6">
           {poll.options.map((option) => {
             const percentage = poll.totalVotes > 0 
               ? Math.round((option.votes / poll.totalVotes) * 100) 
@@ -138,23 +138,23 @@ export default function PollView() {
                 <button
                   onClick={() => vote(option.id)}
                   disabled={poll.userVoted}
-                  className={`w-full p-4 text-left rounded-md transition-colors relative z-10 ${
+                  className={`w-full p-4 text-left rounded-lg transition-colors relative z-10 ${
                     poll.userVoted 
-                      ? 'bg-gray-100 cursor-default'
-                      : 'hover:bg-teal-50 border border-gray-200'
+                      ? 'bg-gray-50'
+                      : 'hover:bg-teal-50 border border-gray-200 shadow-sm'
                   }`}
                 >
                   <div className="flex justify-between items-center">
-                    <span>{option.text}</span>
+                    <span className="font-medium">{option.text}</span>
                     {poll.userVoted && (
-                      <span className="text-gray-600">
-                        {option.votes} votes ({percentage}%)
+                      <span className="text-gray-600 ml-2">
+                        {option.votes} vote{option.votes !== 1 ? 's' : ''} ({percentage}%)
                       </span>
                     )}
                   </div>
                   {poll.userVoted && (
                     <div 
-                      className="absolute left-0 top-0 h-full bg-teal-100 rounded-md opacity-20 z-0"
+                      className="absolute left-0 top-0 h-full bg-teal-100 rounded-lg opacity-30 z-0"
                       style={{ width: `${percentage}%` }}
                     />
                   )}
@@ -164,8 +164,8 @@ export default function PollView() {
           })}
         </div>
 
-        <div className="mt-6 flex justify-between items-center text-sm text-gray-600">
-          <span>Total votes: {poll.totalVotes}</span>
+        <div className="flex justify-between items-center text-sm text-gray-600 pt-4 border-t border-gray-100">
+          <span>Total votes: <span className="font-medium">{poll.totalVotes}</span></span>
         </div>
       </div>
     </div>
