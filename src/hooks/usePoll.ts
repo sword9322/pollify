@@ -2,6 +2,12 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import type { Poll, Option } from '../types';
 
+interface PollOption {
+  id: string;
+  text: string;
+  poll_id: string;
+}
+
 export function usePoll(pollId: string) {
   const [poll, setPoll] = useState<Poll | null>(null);
   const [loading, setLoading] = useState(true);
@@ -18,18 +24,27 @@ export function usePoll(pollId: string) {
 
   async function fetchPoll() {
     try {
-      const { data: pollData, error: pollError } = await supabase
+      // Try to fetch by short_id first (if it looks like a short ID - not a UUID)
+      const isShortId = pollId.length < 36;
+      
+      let query = supabase
         .from('polls')
-        .select('*, poll_options(*)')
-        .eq('id', pollId)
-        .single();
+        .select('*, poll_options(*)');
+      
+      if (isShortId) {
+        query = query.eq('short_id', pollId);
+      } else {
+        query = query.eq('id', pollId);
+      }
+      
+      const { data: pollData, error: pollError } = await query.single();
 
       if (pollError) throw pollError;
 
       const { data: votesData, error: votesError } = await supabase
         .from('votes')
         .select('option_id, ip_address')
-        .eq('poll_id', pollId);
+        .eq('poll_id', pollData.id);
 
       if (votesError) throw votesError;
 
@@ -46,7 +61,7 @@ export function usePoll(pollId: string) {
       }
 
       // Calculate votes for each option
-      const optionsWithVotes: Option[] = pollData.poll_options.map(option => ({
+      const optionsWithVotes: Option[] = pollData.poll_options.map((option: PollOption) => ({
         id: option.id,
         text: option.text,
         votes: votesData.filter(vote => vote.option_id === option.id).length
@@ -57,10 +72,11 @@ export function usePoll(pollId: string) {
 
       setPoll({
         id: pollData.id,
+        short_id: pollData.short_id,
         question: pollData.question,
         options: optionsWithVotes,
         totalVotes,
-        createdAt: pollData.created_at,
+        created_at: pollData.created_at,
         userVoted
       });
       setLoading(false);
@@ -72,6 +88,9 @@ export function usePoll(pollId: string) {
   }
 
   function subscribeToVotes() {
+    // Subscribe using the real UUID poll ID if we have it
+    const subscriptionId = poll?.id || pollId;
+    
     supabase
       .channel('poll_votes')
       .on(
@@ -80,7 +99,7 @@ export function usePoll(pollId: string) {
           event: 'INSERT',
           schema: 'public',
           table: 'votes',
-          filter: `poll_id=eq.${pollId}`
+          filter: `poll_id=eq.${subscriptionId}`
         },
         () => {
           fetchPoll();
@@ -90,6 +109,8 @@ export function usePoll(pollId: string) {
   }
 
   async function vote(optionId: string) {
+    if (!poll) return;
+    
     try {
       // Get client IP
       const response = await fetch('https://api.ipify.org?format=json');
@@ -99,7 +120,7 @@ export function usePoll(pollId: string) {
       const { error: voteError } = await supabase
         .from('votes')
         .insert({
-          poll_id: pollId,
+          poll_id: poll.id, // Use the UUID, not the short_id
           option_id: optionId,
           ip_address: ipData.ip
         });

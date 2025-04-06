@@ -59,7 +59,8 @@ export default function CreatePoll() {
       });
       
       if (result?.id) {
-        setPollUrl(`${window.location.origin}/poll/${result.id}`);
+        const pollId = result.displayId || result.id;
+        setPollUrl(`${window.location.origin}/poll/${pollId}`);
       }
     }
   };
@@ -83,7 +84,17 @@ export default function CreatePoll() {
   const handleAccessPoll = (e: React.FormEvent) => {
     e.preventDefault();
     if (accessUrl.trim()) {
-      const pollId = accessUrl.split('/').pop();
+      // Handle different input formats: full URL or just ID
+      let pollId;
+      
+      if (accessUrl.includes('/poll/')) {
+        // Extract ID from URL
+        pollId = accessUrl.split('/poll/').pop()?.split('/')[0] || '';
+      } else {
+        // User provided just the ID
+        pollId = accessUrl.trim();
+      }
+      
       if (pollId) {
         navigate(`/poll/${pollId}`);
       }

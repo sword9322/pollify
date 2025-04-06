@@ -34,8 +34,10 @@ export function useCreatePoll() {
 
       if (optionsError) throw optionsError;
 
-      navigate(`/poll/${pollData.id}`);
-      return pollData;
+      // Use short_id for the URL if available, otherwise fall back to uuid
+      const pollId = pollData.short_id || pollData.id;
+      navigate(`/poll/${pollId}`);
+      return { ...pollData, displayId: pollId };
     } catch (err) {
       console.error('Error creating poll:', err);
       setError(err instanceof Error ? err.message : 'Failed to create poll');

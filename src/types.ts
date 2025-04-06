@@ -6,6 +6,7 @@ export interface Option {
 
 export interface Poll {
   id: string;
+  short_id?: string;
   question: string;
   options: Option[];
   totalVotes: number;
